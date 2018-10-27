@@ -1,3 +1,8 @@
+#custom
+public
+package-lock.json
+_GISDATA
+
 # Logs
 logs
 *.log
