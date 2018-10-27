@@ -143,7 +143,7 @@ gulp.task('default', function () {
 
     // Run when anything inside of browser/scss changes.
     gulp.watch(browserCssSrc, function () {
-        runSeq('buildCSS', 'reloadCSS');
+        runSeq('buildCSS');
     });
 
 });

@@ -1,10 +1,48 @@
 <html>
-  <!-- stuff -->
-  <body>
+<!-- stuff -->
+<head>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
 
-    <!-- more stuff -->
+<body>
 
-    <script type="text/javascript" src="https://files.mcneel.com/rhino3dm/js/latest/rhino3dm.js"></script>
-    <script type="text/javascript" src="/public/main.js"></script>
-  </body>
+  <div id="three-container">
+
+  </div>
+
+  <!-- shaders -->
+  <script type="x-shader/x-vertex" id="vertexShader">
+    varying vec3 vWorldPosition;
+    void main() {
+      vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+      vWorldPosition = worldPosition.xyz;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    }
+  </script>
+
+  <script type="x-shader/x-fragment" id="fragmentShader">
+    uniform vec3 topColor;
+    uniform vec3 bottomColor;
+    uniform float offset;
+    uniform float exponent;
+    varying vec3 vWorldPosition;
+    void main() {
+      float h = normalize( vWorldPosition + offset ).y;
+      gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+    }
+  </script>
+
+  <!-- more stuff -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://files.mcneel.com/rhino3dm/js/latest/rhino3dm.js"></script>
+  <script type="text/javascript" src="/node_modules/three/build/three.js"></script>
+  <!-- <script src="/node_modules/three/examples/js/controls/PointerLockControls.js"></script> -->
+  <script src="/node_modules/three/examples/js/controls/OrbitControls.js"></script>
+  <script src="/node_modules/three/examples/js/objects/Reflector.js"></script>
+  <script src="/node_modules/three/examples/js/objects/Refractor.js"></script>
+  <script src="/node_modules/three/examples/js/objects/Water2.js"></script>
+  <script src="/node_modules/three/examples/js/WebGL.js"></script>
+  <script type="text/javascript" src="/public/main.js"></script>
+</body>
+
 </html>
