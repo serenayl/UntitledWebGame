@@ -70,7 +70,7 @@ const THREE_CONTROLLER = {
 		orbitControls = new THREE.OrbitControls(camera);
 
 		scene = new THREE.Scene();
-		scene.background = new THREE.Color("#CCEEFF");
+		scene.background = new THREE.Color(BACKGROUND_COLOR);
 
 		// LIGHTS
 
@@ -83,16 +83,16 @@ const THREE_CONTROLLER = {
 
 		water = new THREE.Water(
 			waterGeometry, {
-				textureWidth: 512,
-				textureHeight: 512,
+				textureWidth: 1024,
+				textureHeight: 1024,
 				waterNormals: new THREE.TextureLoader().load('textures/waternormals.jpg', function(texture) {
 					texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 				}),
-				alpha: 1.0,
+				alpha: 0.25,
 				sunDirection: sunLight.position.clone().normalize(),
 				sunColor: 0xffffff,
-				waterColor: 0x001e0f,
-				distortionScale: 3.7,
+				waterColor: 0xffffff,
+				distortionScale: 50,
 				fog: scene.fog !== undefined
 			}
 		);
@@ -104,7 +104,7 @@ const THREE_CONTROLLER = {
 		// Skybox
 
 		var sky = new THREE.Sky();
-		sky.scale.setScalar(ROUGH_SCENE_SIZE*2);
+		sky.scale.setScalar(ROUGH_SCENE_SIZE * 2);
 		scene.add(sky);
 
 		var uniforms = sky.material.uniforms;
@@ -115,7 +115,7 @@ const THREE_CONTROLLER = {
 		uniforms.mieCoefficient.value = 0.005;
 		uniforms.mieDirectionalG.value = 0.8;
 
-		var parameters = {
+		sunParameters = {
 			distance: ROUGH_SCENE_SIZE,
 			inclination: 0.3496,
 			azimuth: 0.247
@@ -126,15 +126,18 @@ const THREE_CONTROLLER = {
 
 		function updateSun() {
 
-			var theta = Math.PI * (parameters.inclination - 0.5);
-			var phi = 2 * Math.PI * (parameters.azimuth - 0.5);
+			var theta = Math.PI * (sunParameters.inclination - 0.5);
+			var phi = 2 * Math.PI * (sunParameters.azimuth - 0.5);
 
-			sunLight.position.x = parameters.distance * Math.cos(phi);
-			sunLight.position.y = parameters.distance * Math.sin(phi) * Math.sin(theta);
-			sunLight.position.z = parameters.distance * Math.sin(phi) * Math.cos(theta);
+			sunLight.position.z = ROUGH_SCENE_SIZE;
+
+			sunLight.position.x = sunParameters.distance * Math.cos(phi);
+			sunLight.position.y = sunParameters.distance * Math.sin(phi) * Math.sin(theta);
+			// sunLight.position.z = sunParameters.distance * Math.sin(phi) * Math.cos(theta);
 
 			sky.material.uniforms.sunPosition.value = sunLight.position.copy(sunLight.position);
 			water.material.uniforms.sunDirection.value.copy(sunLight.position).normalize();
+			water.material.uniforms.size.value = 0.001;
 
 			sunLightHeper = new THREE.DirectionalLightHelper(sunLight, 10);
 			scene.add(sunLightHeper);
@@ -150,7 +153,7 @@ const THREE_CONTROLLER = {
 
 
 
-		// // scene.fog = new THREE.Fog(scene.background, 1, 65000);
+		scene.fog = new THREE.Fog(scene.background, ROUGH_SCENE_SIZE/200, ROUGH_SCENE_SIZE/10);
 		// // scene.fog = new THREE.Fog(0xffffff, 0.015, 10000);
 		//
 		// // LIGHTS
@@ -332,7 +335,7 @@ const THREE_CONTROLLER = {
 		// sphere.rotation.x = time * 0.5;
 		// sphere.rotation.z = time * 0.51;
 
-		water.material.uniforms.time.value += 1.0 / 60.0;
+		water.material.uniforms.time.value += 0.1 / 60.0;
 
 		renderer.render(scene, camera);
 
