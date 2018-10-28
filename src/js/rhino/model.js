@@ -4,23 +4,11 @@ function begin() {
 	if (!Module.File3dm) return setTimeout(begin, 100);
 
 	loadModel("/3dm/terrain.3dm").then((model) => {
-		const layers = model.layers();
-
-		let objectTable = model.objects();
-		let breps = [];
-		for (let i = 0; i < objectTable.count; i++) {
-			let brep = objectTable.get(i).geometry();
-			// brep.rotate(0, [1, 0, 0], [0, 0, 0]);
-			breps.push(brep);
-		}
-		breps.forEach(b => {
-			const mesh = meshToThreejs(b, new THREE.MeshNormalMaterial({
-				flatShading: true
-			}));
-			scene.add(mesh);
-			THREE_CONTROLLER.zoomToObject(mesh);
+		const meshes = getMeshesFromModel(model, GROUND_MATERIAL);
+		meshes.forEach(m => {
+			scene.add(m);
+			THREE_CONTROLLER.zoomToObject(m);
 		});
-		return breps;
 	});
 }
 
@@ -32,6 +20,17 @@ function begin() {
 ██   ██ ██  ██ ██ ██    ██ ██  ██ ██
 ██   ██ ██   ████  ██████  ██   ████
 */
+
+function getMeshesFromModel(model, material) {
+	let objectTable = model.objects();
+	let meshes = [];
+	for (let i = 0; i < objectTable.count; i++) {
+		let brep = objectTable.get(i).geometry();
+		// brep.rotate(0, [1, 0, 0], [0, 0, 0]);
+		meshes.push(meshToThreejs(brep, material));
+	}
+	return meshes;
+}
 
 function meshToThreejs(mesh, material) {
 	var geometry = new THREE.BufferGeometry();
