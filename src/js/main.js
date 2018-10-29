@@ -10,4 +10,4 @@ const GROUND_MATERIAL = new THREE.MeshPhongMaterial({
 
 const ROUGH_SCENE_SIZE = 1000000;
 
-const BACKGROUND_COLOR = "#CCEEFF";
+const BACKGROUND_COLOR = "#7c828c";
