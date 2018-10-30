@@ -11,13 +11,13 @@ function begin() {
         });
     });
 
-		// loadModel("/3dm/sun.3dm").then((model) => {
-		//     const meshes = getObjectsFromModel(model, GROUND_MATERIAL);
-		//     meshes.forEach(m => {
-		//         scene.add(m);
-		//         THREE_CONTROLLER.zoomToObject(m);
-		//     });
-		// });
+		loadModel("/3dm/sun_up.3dm").then((model) => {
+		    const meshes = getMeshesFromModel(model, SUN_MATERIAL);
+		    meshes.forEach(m => {
+		        scene.add(m);
+		        THREE_CONTROLLER.zoomToObject(m);
+		    });
+		});
 }
 
 
@@ -32,6 +32,7 @@ function begin() {
 
 function getMeshesFromModel(model, material) {
     let objectTable = model.objects();
+    console.log("object count meshes: ", objectTable.count);
     let meshes = [];
     for (let i = 0; i < objectTable.count; i++) {
         let brep = objectTable.get(i).geometry();
@@ -62,12 +63,14 @@ function meshToThreejs(mesh, material) {
     var vertices = mesh.vertices();
     var vertexbuffer = new Float32Array(3 * vertices.count);
     for (var i = 0; i < vertices.count; i++) {
+      // if (i===0) console.log(vertices.get(i));
         let pt = vertices.get(i);
         let threeVec = new THREE.Vector3(pt[0], pt[1], pt[2]);
         vertexbuffer[i * 3] = pt[0];
         vertexbuffer[i * 3 + 1] = pt[1];
         vertexbuffer[i * 3 + 2] = pt[2];
     }
+    // console.log(vertices);
     // itemSize = 3 because there are 3 values (components) per vertex
     geometry.addAttribute('position', new THREE.BufferAttribute(vertexbuffer, 3));
 
@@ -92,6 +95,7 @@ function meshToThreejs(mesh, material) {
     }
     geometry.addAttribute('normal', new THREE.BufferAttribute(normalBuffer, 3));
     let newmesh = new THREE.Mesh(geometry, material);
+    console.log(newmesh);
     return newmesh;
 
 }
@@ -102,6 +106,7 @@ function loadModel(url) {
             data.arrayBuffer().then(buffer => {
                 const arr = new Uint8Array(buffer);
                 const model = Module.File3dm.fromByteArray(arr);
+                // console.log(model);
                 resolve(model);
             });
         });

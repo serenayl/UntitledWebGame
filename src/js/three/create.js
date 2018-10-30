@@ -12,8 +12,8 @@ const THREE_CONTROLLER = {
 		const offset = 1.25;
 
 		const boundingBox = obj.geometry.boundingBox.clone();
-		const center = boundingBox.getCenter();
-		const size = boundingBox.getSize();
+		const center = boundingBox.getCenter(new THREE.Vector3());
+		const size = boundingBox.getSize(new THREE.Vector3());
 
 		// get the max side of the bounding box (fits to width OR height as needed )
 		const maxDim = Math.max(size.x, size.y, size.z);
